@@ -5,14 +5,15 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 bot = Bot(token='_')
 dp = Dispatcher(bot)
 
-button_save = KeyboardButton('Создать игру')
-button_return = KeyboardButton('Мои игры')
-keyboard1 = ReplyKeyboardMarkup(resize_keyboard=True).add(button_save, button_return)
-
 @dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
     await message.reply("Привет! Этот бот поможет вам организовать игру Тайный Санта».", reply_markup=keyboard1)
+    
+button_create = KeyboardButton('Создать игру')
+button_games = KeyboardButton('Мои игры')
+keyboard1 = ReplyKeyboardMarkup(resize_keyboard=True).add(button_create, button_games)
 
+#Создать игру
 @dp.message_handler(lambda message: message.text == 'Создать игру')
 async def handle_hi(message: types.Message):
     await message.reply("Введи название игры")
@@ -21,13 +22,22 @@ async def handle_hi(message: types.Message):
 async def handle_hi(message: types.Message):
     await message.reply("Как участники будут дарить подарки?")
 
+button_mail = KeyboardButton('Почта')
+button_personally = KeyboardButton('Лично')
+keyboard2 = ReplyKeyboardMarkup(resize_keyboard=True).add(button_mail, button_personally)
+
+
+#Мои игры
 @dp.message_handler(lambda message: message.text == 'Мои игры')
 async def handle_hi(message: types.Message):
     await message.reply("Функциия на ремонте")
 
+#Пока
 @dp.message_handler(lambda message: message.text.lower() == 'пока')
 async def handle_bye(message: types.Message):
     await message.reply("До свидания!", reply_markup=types.ReplyKeyboardRemove())
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
+
+

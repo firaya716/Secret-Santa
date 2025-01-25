@@ -2,7 +2,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.utils import executor
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-bot = Bot(token='7557750266:AAElnGhdbdevI_LGh_xc-bp6DUa6dAPsKmA')
+bot = Bot(token='-')
 dp = Dispatcher(bot)
 
 @dp.message_handler(commands=['start'])

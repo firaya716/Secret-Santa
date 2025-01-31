@@ -17,5 +17,5 @@
 **Настройка бота**
 - создаем нового бота через @BotFather в телеграме коммандой "/newbot"
 - получаем токен который вводим в файл "cod"  
-bot = Bot(token='YOUR_TOKEN')
+-b bot = Bot(token='YOUR_TOKEN')
 

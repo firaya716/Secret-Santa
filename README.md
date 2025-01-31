@@ -11,10 +11,11 @@
 
 **Установка**  
 Для работы вам понадобиться:
-- Python 3
-- Бот в Telegram ( можно создать через BotFather )
+- установить Python https://www.python.org/downloads/
+- Создать бота в Telegram (можно создать через BotFather)
 
 **Настройка бота**
 - создаем нового бота через @BotFather в телеграме коммандой "/newbot"
 - получаем токен который вводим в файл "cod"  
 bot = Bot(token='YOUR_TOKEN')
+

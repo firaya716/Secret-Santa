@@ -1,51 +1,83 @@
-from aiogram import Bot, Dispatcher, types
-from aiogram.utils import executor
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+import telebot
+from telebot import types
 
-bot = Bot(token='YOUR_TOKEN')
-dp = Dispatcher(bot)
+bot = telebot.TeleBot('7557750266:AAElnGhdbdevI_LGh_xc-bp6DUa6dAPsKmA')
 
-@dp.message_handler(commands=['start'])
-async def send_welcome(message: types.Message):
-    await message.reply("Привет! Этот бот поможет вам организовать игру «Тайный Санта».", reply_markup=keyboard1)
-    
-button_create = KeyboardButton('Создать игру')
-button_games = KeyboardButton('Мои игры')
-keyboard1 = ReplyKeyboardMarkup(resize_keyboard=True).add(button_create, button_games)
+#start
+@bot.message_handler(commands=['start'])
+def start_message(message):
+    bot.send_message(message.chat.id, "Привет! Этот бот поможет вам организовать игру «Тайный Санта».")
+
+#Создать игру/Мои игры
+menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
+create_game = types.KeyboardButton("Создать игру")
+games = types.KeyboardButton("Мои игры")
+menu.add(create_game,games)
+
+#Кнопка назад
+back = types.ReplyKeyboardMarkup(resize_keyboard=True)
+back_button = types.KeyboardButton("Назад")
+back.add(back_button)
 
 #Создать игру
-@dp.message_handler(lambda message: message.text == 'Создать игру')
-async def handle_hi(message: types.Message):
-    await message.reply("Введи название игры")
+present_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
+mail_button = types.KeyboardButton("Почта или доставка")
+game_button = types.KeyboardButton("Лично")
+back_button = types.KeyboardButton("Назад")
+present_menu.add(mail_button,game_button,back_button)
 
-@dp.message_handler()
-async def handle_hi(msg: tppes.Message):
-    await msg.reply("Как участники будут дарить подарки?")
-
-button_mail = KeyboardButton('Почта')
-button_personally = KeyboardButton('Лично')
-keyboard2 = ReplyKeyboardMarkup(resize_keyboard=True).add(button_mail, button_personally)
-
-#Почта
-@dp.message_handler(lambda message: message.text == 'Почта')
-async def handle_hi(message: types.Message):
-    await message.reply("Вы выбрали «Почтой или доставкой». Т.е. вы все находитесь в разных местах и будете отправлять подарки на домашний адрес. У всех игроков мы попросим ввести свой адрес.")
-
-#Лично
-@dp.message_handler(lambda message: message.text == 'Лично')
-async def handle_hi(message: types.Message):
-    await message.reply("Вы выбрали «Лично». Т.е. вы собирётесь в специально условленном месте и будете лично вручать подарки.")
+budget_menu = types.ReplyKeyboardMarkup(resize_keyboard =True)
+budget100_button = types.KeyboardButton("100")
+budget500_button = types.KeyboardButton("500")
+budget1000_button = types.KeyboardButton("1000")
+budget1500_button = types.KeyboardButton("1500")
+budget2000_button = types.KeyboardButton("2000")
+back_button = types.KeyboardButton("Назад")
+budget_menu.add(budget100_button,budget500_button,budget1000_button,budget1500_button,budget2000_button,back_button)
 
 #Мои игры
-@dp.message_handler(lambda message: message.text == 'Мои игры')
-async def handle_hi(message: types.Message):
-    await message.reply("Функциия на ремонте")
+games_menu = types.ReplyKeyboardMarkup(resize_keyboard =True)
+game1_button = types.KeyboardButton("Тест игры")#Добавить возможность писать любое название
+back_button = types.KeyboardButton("Назад")
+games_menu.add(game1_button,back_button)
 
-#Пока
-@dp.message_handler(lambda message: message.text.lower() == 'пока')
-async def handle_bye(message: types.Message):
-    await message.reply("До свидания!", reply_markup=types.ReplyKeyboardRemove())
+name_game_menu = types.ReplyKeyboardMarkup(resize_keyboard =True) #должно появляться при написанни любого *названия* игры
+invite_button = types.KeyboardButton("Пригласить игрока") #Добавить возможность приглашать игрока
+look_button = types.KeyboardButton("Кто играет") #Добавить возможность смотреть кто играет
+zherebovka_button = types.KeyboardButton("Жеребёвка") #Добавить возможность жеребёвки
+name_game_menu.add(invite_button,look_button,zherebovka_button)
 
-if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
-
+#text
+@bot.message_handler(content_types = ['text'])
+def text_message(message):
+    if message.text == "Назад":
+        bot.send_message(message.chat.id, "Вы вернулись назад", reply_markup = menu)
+    elif message.text == "Создать игру": #Создать игру
+        bot.send_message(message.chat.id, "Введите название игры", reply_markup = back)
+    elif message.text == "Тест названия": #Сделать что бы можно было писать любое название
+        bot.send_message(message.chat.id,"Как участники будут дарить подарки?", reply_markup = present_menu)
+    elif message.text == "Почта или доставка":
+        bot.send_message(message.chat.id,"Вы выбрали «Почтой или доставкой». Т.е. вы все находитесь в разных местах и будете отправлять подарки на домашний адрес. У всех игроков мы попросим ввести свой адрес.", reply_markup = budget_menu)
+    elif message.text == "Лично":
+        bot.send_message(message.chat.id,"Вы выбрали «Лично». Т.е. вы собирётесь в специально условленном месте и будете лично вручать подарки.", reply_markup = budget_menu)
+    elif message.text == "Вы выбрали «Лично». Т.е. вы собирётесь в специально условленном месте и будете лично вручать подарки.":
+        bot.send_message(message.chat.id,"Установите бюджет на подарки", reply_markup = budget_menu)
+    elif message.text == "Вы выбрали «Почтой или доставкой». Т.е. вы все находитесь в разных местах и будете отправлять подарки на домашний адрес. У всех игроков мы попросим ввести свой адрес.":
+        bot.send_message(message.chat.id,"Установите бюджет на подарки", reply_markup = budget_menu)
+    elif message.text == "100":
+        bot.send_message(message.chat.id,"Игра создана", reply_markup = menu)
+    elif message.text == "500":
+        bot.send_message(message.chat.id,"Игра создана", reply_markup = menu)
+    elif message.text == "1000":
+        bot.send_message(message.chat.id,"Игра создана", reply_markup = menu)
+    elif message.text == "1500":
+        bot.send_message(message.chat.id,"Игра создана", reply_markup = menu)
+    elif message.text == "2000":
+        bot.send_message(message.chat.id,"Игра создана", reply_markup = menu)
+        
+    elif message.text == "Мои игры": #Мои игры
+        bot.send_message(message.chat.id, "Выберите игру", reply_markup = games_menu)
+    elif message.text == "Тест игры": #Сделать что бы можно было писать любое название
+        bot.send_message(message.chat.id,"Хотите пригласить или посмотреть кто играет?", reply_markup = name_game_menu)    
+        
+bot.infinity_polling()

@@ -1,7 +1,7 @@
 import telebot
 from telebot import types
 
-bot = telebot.TeleBot('YOUR_TOKEN')
+bot = telebot.TeleBot('7557750266:AAElnGhdbdevI_LGh_xc-bp6DUa6dAPsKmA')
 
 #start
 @bot.message_handler(commands=['start'])
@@ -10,8 +10,8 @@ def start_message(message):
 
 #Создать игру/Мои игры
 menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
-create_game = types.KeyboardButton("Создать игру")
-games = types.KeyboardButton("Мои игры")
+create_game = types.KeyboardButton("Создать игру") #Запоминать созданную "игра"
+games = types.KeyboardButton("Мои игры") #Показывать созданные игры
 menu.add(create_game,games)
 
 #Кнопка назад
@@ -21,12 +21,12 @@ back.add(back_button)
 
 #Создать игру
 present_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
-mail_button = types.KeyboardButton("Почта или доставка")
+mail_button = types.KeyboardButton("Почта или доставка") #Записывать адрес в "пользователи"
 game_button = types.KeyboardButton("Лично")
 back_button = types.KeyboardButton("Назад")
 present_menu.add(mail_button,game_button,back_button)
 
-budget_menu = types.ReplyKeyboardMarkup(resize_keyboard =True)
+budget_menu = types.ReplyKeyboardMarkup(resize_keyboard =True) #Записать сумму в "игра"
 budget100_button = types.KeyboardButton("100")
 budget500_button = types.KeyboardButton("500")
 budget1000_button = types.KeyboardButton("1000")
@@ -51,7 +51,7 @@ name_game_menu.add(invite_button,look_button,zherebovka_button)
 @bot.message_handler(content_types = ['text'])
 def text_message(message):
     if message.text == "Назад":
-        bot.send_message(message.chat.id, "Вы вернулись назад", reply_markup = menu)
+        bot.send_message(message.chat.id, "Вы вернулись назад", reply_markup = menu) #Переносить только на 1 меню назад
 
     elif message.text == "Создать игру": #Создать игру
         bot.send_message(message.chat.id, "Введите название игры", reply_markup = back)

@@ -6,7 +6,7 @@ bot = telebot.TeleBot('YOUR_TOKEN')
 #start
 @bot.message_handler(commands=['start'])
 def start_message(message):
-    bot.send_message(message.chat.id, "Привет! Этот бот поможет вам организовать игру «Тайный Санта».")
+    bot.send_message(message.chat.id, "Привет! Этот бот поможет вам организовать игру «Тайный Санта».", reply_markup = menu)
 
 #Создать игру/Мои игры
 menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -45,7 +45,8 @@ name_game_menu = types.ReplyKeyboardMarkup(resize_keyboard =True) #должно 
 invite_button = types.KeyboardButton("Пригласить игрока") #Добавить возможность приглашать игрока
 look_button = types.KeyboardButton("Кто играет") #Добавить возможность смотреть кто играет
 zherebovka_button = types.KeyboardButton("Жеребьевка") #Добавить возможность жеребьевки
-name_game_menu.add(invite_button,look_button,zherebovka_button)
+back_button = types.KeyboardButton("Назад")
+name_game_menu.add(invite_button,look_button,zherebovka_button,back_button)
 
 #text
 @bot.message_handler(content_types = ['text'])
@@ -83,3 +84,4 @@ def text_message(message):
     elif message.text == "Жеребьевка":
         bot.send_message(message.chat.id,"Вам выпал: ", reply_markup = name_game_menu) #добавить жеребьевку между игроками 
 bot.infinity_polling()
+

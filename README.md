@@ -10,7 +10,7 @@
 
 **Установка**  
 - установить Python https://www.python.org/downloads/
-- установить на компьютер необходимую библиотеку telebot (pyTelegramBotAPI). Для этого открываем командную строку и прописываем  `/pip install pyTelegramBotAPI`.
+- установить на компьютер необходимую библиотеку telebot (pyTelegramBotAPI). Для этого открываем командную строку и прописываем  `pip install pyTelegramBotAPI`.
 - аккаунт в телеграмме
 
 **Настройка бота**

@@ -2,7 +2,7 @@ import sqlite3
 import telebot
 from telebot import types
 
-bot = telebot.TeleBot('7557750266:AAElnGhdbdevI_LGh_xc-bp6DUa6dAPsKmA')
+bot = telebot.TeleBot('YOUR_TOKEN')
 
 
 conn = sqlite3.connect('database.db', check_same_thread=False)

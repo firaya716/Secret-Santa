@@ -49,8 +49,6 @@ def register(message):
         bot.send_message(message.chat.id, "Вы успешно зарегистрированы!")
 
 
-
-
    # Создаем кнопки
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     create_game_button = types.KeyboardButton("Создать игру")
@@ -179,41 +177,7 @@ def handle_buttons(message):
             del user_states[message.chat.id]  # Удаляем состояние после обработки
 
 
-
-
-
-# Инлайн-кнопки
-@bot.message_handler(commands=['menu'])
-def menu(message):
-    keyboard = telebot.types.InlineKeyboardMarkup()
-    create_game_button = telebot.types.InlineKeyboardButton("Создать игру", callback_data="create_game")
-    register_button = telebot.types.InlineKeyboardButton("Зарегистрироваться", callback_data="register")
-    guess_button = telebot.types.InlineKeyboardButton("Угадать игрока", callback_data="guess")
-    scoreboard_button = telebot.types.InlineKeyboardButton("Смотреть баллы", callback_data="scoreboard")
-    
-    keyboard.add(create_game_button)
-    keyboard.add(register_button)
-    keyboard.add(guess_button)
-    keyboard.add(scoreboard_button)
-    
-    bot.send_message(message.chat.id, "Выберите действие:", reply_markup=keyboard)
-
-# Обработка нажатий на инлайн-кнопки
-@bot.callback_query_handler(func=lambda call: True)
-def callback_handler(call):
-    if call.data == "create_game":
-        bot.send_message(call.message.chat.id, "Создание игры... используйте /create_game для создания.")
-    elif call.data == "register":
-        bot.send_message(call.message.chat.id, "Регистрация... используйте /register для регистрации.")
-    elif call.data == "guess":
-        bot.send_message(call.message.chat.id, "Угадывание игрока... используйте /guess для угадывания (по username).")
-    elif call.data == "scoreboard":
-        scoreboard(call.message)  # Вызываем функцию scoreboard для показа счета
-
-
-
 # Запуск бота
 if __name__ == '__main__':
     bot.polling(none_stop=True)
-
 

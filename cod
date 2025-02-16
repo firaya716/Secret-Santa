@@ -4,7 +4,7 @@ import random
 from telebot import types
 
 # Инициализация бота
-API_TOKEN = 'TOKEN'
+API_TOKEN = '7557750266:AAFFQRS4wR7LXL-2YfDJWBi1C16uGm2ULeQ'
 bot = telebot.TeleBot(API_TOKEN)
 
 
@@ -47,18 +47,16 @@ def register(message):
         data['users'][str(user_id)] = {"points": 0, "username": username, "game": None}
         save_data(data)
         bot.send_message(message.chat.id, "Вы успешно зарегистрированы!")
-
-
-   # Создаем кнопки
+ # Создаем кнопки
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     create_game_button = types.KeyboardButton("Создать игру")
     join_game_button = types.KeyboardButton("Присоединиться к игре")
     view_players_button = types.KeyboardButton("Просмотреть игроков")
     assign_santa_button = types.KeyboardButton("Назначить Тайного Санту")
     guess_santa_button = types.KeyboardButton("Угадать Тайного Санту")
-    view_points_button = types.KeyboardButton("Просмотреть баллы")
+    view_points_button = types.KeyboardButton("Просмотреть баллы")        
     markup.add(create_game_button, join_game_button, view_players_button, assign_santa_button, guess_santa_button, view_points_button)
-    
+        
     bot.send_message(message.chat.id, "Выберите действие:", reply_markup=markup)
 
 # Обработка нажатий на кнопки
@@ -67,29 +65,57 @@ def handle_buttons(message):
     data = load_data()  # Загружаем данные при каждом нажатии
     games = data.get('games', {})  # Получаем игры из загруженных данных
     users = data.get('users', {})  # Получаем пользователей из загруженных данных
+    user_id = str(message.from_user.id)
 
     if message.text == "Создать игру":
         bot.send_message(message.chat.id, "Вы выбрали создать игру. Пожалуйста, введите название игры.")
         user_states[message.chat.id] = 'waiting_for_game_name'  # Сохраняем состояние пользователя
 
     elif message.text == "Присоединиться к игре":
+        if user_id not in users:
+            bot.send_message(message.chat.id, "Сначала зарегистрируйтесь с помощью команды /register.")
+            return
         bot.send_message(message.chat.id, "Вы выбрали присоединиться к игре. Пожалуйста, введите ID игры.")
         user_states[message.chat.id] = 'waiting_for_game_id'  # Сохраняем состояние для ID игры
 
-    elif message.text == "Просмотреть игроков":
-        user_id = message.from_user.id
-        user_game_id = users.get(str(user_id), {}).get("game")  # Получаем ID игры пользователя
+    elif message.chat.id in user_states:
+        if user_states[message.chat.id] == 'waiting_for_game_name':
+            game_name = message.text
+            game_id = str(len(games) + 1)  # Генерируем ID игры как строку
+            games[game_id] = {"name": game_name, "players": []}  # Сохраняем игру в словаре
+            
+            # Обновляем информацию о пользователе
+            users[user_id]["game"] = game_id            
+            save_data({"users": users, "games": games})  # Сохраняем изменения в файле
+            bot.send_message(message.chat.id, f"Игра '{game_name}' создана с ID: {game_id}.")
 
+            del user_states[message.chat.id]  # Удаляем состояние после обработки
+
+        elif user_states[message.chat.id] == 'waiting_for_game_id':
+            game_id = message.text.strip()
+            if game_id in games:
+                game_name = games[game_id]["name"]
+                games[game_id]["players"].append(users[user_id]["username"])  # Добавляем игрока в игру
+                users[user_id]["game"] = game_id  # Обновляем информацию о пользователе                
+                save_data({"users": users, "games": games})  # Сохраняем изменения в файле
+                bot.send_message(message.chat.id, f"Вы присоединились к игре '{game_name}'.")
+                del user_states[message.chat.id]  # Удаляем состояние после обработки
+            else:
+                bot.send_message(message.chat.id, "Неверный ID игры.")
+                del user_states[message.chat.id]  # Удаляем состояние после обработки
+
+    elif message.text == "Просмотреть игроков":
+        user_game_id = users.get(user_id, {}).get("game")  # Получаем ID игры пользователя
         if user_game_id is None:
             bot.send_message(message.chat.id, "Вы не присоединились ни к одной игре.")
         else:
-            players_in_game = [user["username"] for user in users.values() if user["game"] == user_game_id]
+            players_in_game = [user["username"] for user in users.values() if user.get("game") == user_game_id]
             if players_in_game:
                 players_list = "\n".join(players_in_game)
                 bot.send_message(message.chat.id, f"Игроки в вашей игре:\n{players_list}")
             else:
                 bot.send_message(message.chat.id, "В вашей игре пока нет участников.")
-
+            
     elif message.text == "Назначить Тайного Санту":
         user_id = message.from_user.id
         user_game_id = users.get(str(user_id), {}).get("game")  # Получаем ID игры пользователя
@@ -176,8 +202,9 @@ def handle_buttons(message):
             save_data({"users": users, "games": games})  # Сохраняем изменения в файле
             del user_states[message.chat.id]  # Удаляем состояние после обработки
 
-
 # Запуск бота
 if __name__ == '__main__':
     bot.polling(none_stop=True)
+
+    
 

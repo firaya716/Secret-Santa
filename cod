@@ -53,9 +53,8 @@ def register(message):
     join_game_button = types.KeyboardButton("Присоединиться к игре")
     view_players_button = types.KeyboardButton("Просмотреть игроков")
     assign_santa_button = types.KeyboardButton("Назначить Тайного Санту")
-    guess_santa_button = types.KeyboardButton("Угадать Тайного Санту")
-    view_points_button = types.KeyboardButton("Просмотреть баллы")        
-    markup.add(create_game_button, join_game_button, view_players_button, assign_santa_button, guess_santa_button, view_points_button)
+        
+    markup.add(create_game_button, join_game_button, view_players_button, assign_santa_button)
         
     bot.send_message(message.chat.id, "Выберите действие:", reply_markup=markup)
 
@@ -146,62 +145,7 @@ def handle_buttons(message):
 
             bot.send_message(message.chat.id, "Тайные Санты успешно назначены!")
 
-    elif message.text == "Угадать Тайного Санту":
-        bot.send_message(message.chat.id, "Введите username вашего Тайного Санты.")
-        user_states[message.chat.id] = 'waiting_for_guess'  # Сохраняем состояние для угадывания
-
-    elif message.text == "Просмотреть баллы":
-        user_id = message.from_user.id
-        points = users.get(str(user_id), {}).get("points", 0)
-        bot.send_message(message.chat.id, f"Ваши баллы: {points}")
-
-    elif message.chat.id in user_states:
-        if user_states[message.chat.id] == 'waiting_for_game_name':
-            game_name = message.text
-            game_id = len(games) + 1  # Генерируем ID игры
-            games[game_id] = game_name  # Сохраняем игру в словаре
-            
-            # Обновляем информацию о пользователе
-            users[str(message.from_user.id)]["game"] = game_id
-            
-            save_data({"users": users, "games": games})  # Сохраняем изменения в файле
-            bot.send_message(message.chat.id, f"Принято! Ваше название: '{game_name}'.\nID вашей игры: {game_id}.")
-            del user_states[message.chat.id]  # Удаляем состояние после обработки
-
-        elif user_states[message.chat.id] == 'waiting_for_game_id':
-            game_id = message.text
-            if game_id.isdigit() and int(game_id) in games:
-                game_name = games[int(game_id)]
-                users[str(message.from_user.id)]["game"] = int(game_id)  # Обновляем информацию о пользователе
-                save_data({"users": users, "games": games})  # Сохраняем изменения в файле
-                
-                bot.send_message(message.chat.id, f"Принято! Вы присоединились к игре под названием '{game_name}'.")
-            else:
-                bot.send_message(message.chat.id, "Неверный ID игры. Пожалуйста, попробуйте снова.")
-            del user_states[message.chat.id]  # Удаляем состояние после обработки
-
-        elif user_states[message.chat.id] == 'waiting_for_guess':
-            guessed_username = message.text
-            user_id = message.from_user.id
-            actual_santa_id = users.get(str(user_id), {}).get("santa")  # Получаем ID Тайного Санты пользователя
-            
-            if actual_santa_id is None:
-                bot.send_message(message.chat.id, "Вы еще не получили своего Тайного Санту.")
-                del user_states[message.chat.id]
-                return
-            
-            actual_santa_username = users[actual_santa_id]["username"]
-
-            if guessed_username.lower() == actual_santa_username.lower():
-                users[str(user_id)]["points"] += 5
-                bot.send_message(message.chat.id, "Поздравляем! Вы угадали своего Тайного Санту и получили 5 баллов!")
-            else:
-                users[str(user_id)]["points"] -= 3
-                bot.send_message(message.chat.id, f"К сожалению, это неверно. Вы потеряли 3 балла. Ваш Тайный Санта был: {actual_santa_username}.")
-            
-            save_data({"users": users, "games": games})  # Сохраняем изменения в файле
-            del user_states[message.chat.id]  # Удаляем состояние после обработки
-
+ 
 # Запуск бота
 if __name__ == '__main__':
     bot.polling(none_stop=True)

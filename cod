@@ -4,7 +4,7 @@ import random
 from telebot import types
 
 # Инициализация бота
-API_TOKEN = '7920123774:AAEpOIkNYCU9dSvWG4yu9_cX7MA-c581mKo'  # Замените на свой токен
+API_TOKEN = 'токен'  # Замените на свой токен
 bot = telebot.TeleBot(API_TOKEN)
 
 # Переменные для хранения состояния
